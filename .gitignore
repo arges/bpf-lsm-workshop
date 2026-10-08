@@ -1,0 +1,24 @@
+# Everything large is generated: see the constitution, principle I.
+/cache/
+/build/
+/dist/
+*.part
+*.tmp
+
+# Editor / OS noise
+.DS_Store
+*.swp
+*~
+
+# Build products, if the labs or tests are built in a checkout inside the VM
+vmlinux.h
+*.bpf.o
+*.skel.h
+/labs/tools/try-bind
+/labs/tools/trusted-app
+/labs/tools/fake/
+/labs/05-copyfail-guard/copyfail_guard
+/labs/*.log
+/labs/work/
+/tests/guest/deny_mkdir
+/slides/slides.html

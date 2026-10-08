@@ -1,0 +1,449 @@
+/* @theme cloudflare-light */
+/*
+ * Marp theme matching the Cloudflare 2024 "Simple Light" PowerPoint theme.
+ *
+ * Extracted from input.pptx:
+ *   - bg:     #FFFFFF (lt1)
+ *   - text:   #000000 (dk1)
+ *   - link:   #FF6633 (hlink)
+ *   - dk2:    #FF6633 (Cloudflare orange)
+ *   - lt2:    #F6821F (Cloudflare orange-light)
+ *   - accent1: #FBAD41 (orange-yellow)
+ *   - accent2: #3E74FF (blue)
+ *   - accent3: #960C3E (magenta)
+ *   - accent4: #FFD43C (yellow)
+ *   - accent5: #269B7F (teal-green)
+ *   - accent6: #DFDFDF (gray)
+ *   - fonts:  Arial (headings + body)
+ *
+ * Activate with `theme: cloudflare-light` in slide frontmatter.
+ */
+
+:root {
+  --cf-bg: #ffffff;
+  --cf-fg: #000000;
+  --cf-muted: #6b6b6b;
+  --cf-orange: #f6821f;
+  --cf-orange-bright: #ff6633;
+  --cf-orange-light: #fbad41;
+  --cf-yellow: #ffd43c;
+  --cf-blue: #3e74ff;
+  --cf-teal: #269b7f;
+  --cf-magenta: #960c3e;
+  --cf-gray: #dfdfdf;
+  --cf-surface: #f7f7f7;
+  --cf-border: #cccccc;
+}
+
+section {
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 28px;
+  color: var(--cf-fg);
+  background: var(--cf-bg);
+  padding: 70px 80px 70px 80px;
+  line-height: 1.5;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Keep every content-slide title at the same top-left anchor. */
+section:not(.title):not(.lead) {
+  justify-content: flex-start;
+}
+
+section:not(.title):not(.lead) > h2 {
+  flex: 0 0 auto;
+  width: 100%;
+  margin: 0 0 0.5em 0;
+}
+
+section:not(.title):not(.lead) > h2 a {
+  color: inherit;
+  border-bottom: 0;
+}
+
+/* Section dividers are intentionally centered instead. */
+section.lead {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Thick Cloudflare-orange bar at the bottom of every slide */
+section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12px;
+  background: var(--cf-orange);
+  z-index: 1;
+}
+
+/* Headings: Arial, black with an orange accent rule on h1 */
+section h1,
+section h2,
+section h3,
+section h4 {
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  font-weight: 700;
+  color: var(--cf-fg);
+  line-height: 1.2;
+  margin: 0 0 0.5em 0;
+}
+
+section h1 {
+  font-size: 44px;
+  padding-bottom: 0.25em;
+  border-bottom: 3px solid var(--cf-orange);
+  display: inline-block;
+  align-self: flex-start;
+}
+
+section h2 {
+  font-size: 36px;
+}
+
+section h3 {
+  font-size: 26px;
+  color: var(--cf-orange);
+  margin: 0.6em 0 0.3em 0;
+}
+
+/* Paragraphs and lists */
+section p {
+  margin: 0.5em 0;
+}
+
+section ul,
+section ol {
+  margin: 0.4em 0;
+  padding-left: 1.4em;
+}
+
+section li {
+  margin-bottom: 0.5em;
+}
+
+section li::marker {
+  color: var(--cf-orange);
+}
+
+/* Inline code and code blocks */
+section code {
+  font-family: 'Menlo', 'Consolas', 'Roboto Mono', monospace;
+  background: var(--cf-surface);
+  border: 1px solid var(--cf-border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 0.9em;
+  color: var(--cf-magenta);
+}
+
+section pre {
+  background: var(--cf-surface);
+  border: 1px solid var(--cf-border);
+  border-radius: 4px;
+  padding: 0.8em 1em;
+  font-size: 0.75em;
+  line-height: 1.45;
+  overflow: auto;
+}
+
+section pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--cf-fg);
+  font-size: inherit;
+}
+
+/* Syntax highlighting (highlight.js tokens emitted by Marp) */
+section pre .hljs-comment,
+section pre .hljs-quote { color: #6B7280; font-style: italic; }
+section pre .hljs-keyword,
+section pre .hljs-selector-tag { color: #960C3E; font-weight: bold; }
+section pre .hljs-type,
+section pre .hljs-built_in { color: #2F5FD0; }
+section pre .hljs-string,
+section pre .hljs-char,
+section pre .hljs-regexp { color: #1F7F68; }
+section pre .hljs-number,
+section pre .hljs-literal { color: #B4530A; }
+section pre .hljs-title,
+section pre .hljs-title.function_ { color: #7A3EC8; }
+section pre .hljs-meta,
+section pre .hljs-meta .hljs-keyword { color: #C2410C; font-weight: normal; }
+section pre .hljs-meta .hljs-string { color: #1F7F68; }
+section pre .hljs-variable,
+section pre .hljs-params { color: inherit; }
+section pre .hljs-attr,
+section pre .hljs-attribute { color: #2F5FD0; }
+
+/* Block quotes */
+section blockquote {
+  border-left: 4px solid var(--cf-orange);
+  background: #fff7ec;
+  margin: 0.6em 0;
+  padding: 0.6em 1em;
+  color: var(--cf-fg);
+  font-style: normal;
+}
+
+section strong {
+  color: var(--cf-fg);
+  font-weight: 700;
+}
+
+section em {
+  color: var(--cf-muted);
+  font-style: italic;
+}
+
+/* Tables */
+section table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.9em;
+  width: 100%;
+}
+
+section th,
+section td {
+  border: 1px solid var(--cf-border);
+  padding: 0.5em 0.8em;
+  text-align: left;
+}
+
+section th {
+  background: var(--cf-orange);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+section tr:nth-child(even) td {
+  background: var(--cf-surface);
+}
+
+/* Links */
+section a {
+  color: var(--cf-orange-bright);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+section a:hover {
+  border-bottom-color: var(--cf-orange-bright);
+}
+
+/* Horizontal rule */
+section hr {
+  border: 0;
+  border-top: 1px solid var(--cf-border);
+  margin: 0.8em 0;
+}
+
+/* Title-class slides: vertically + horizontally centered, gradient bg */
+section.title {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, #ffffff 0%, #fff3e2 100%);
+}
+
+section.title h1 {
+  font-size: 60px;
+  font-weight: 700;
+  border-bottom: none;
+  display: block;
+  color: var(--cf-fg);
+  margin: 0;
+  align-self: center;
+}
+
+section.title h1::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 4px;
+  background: var(--cf-orange);
+  margin: 0.4em auto 0 auto;
+}
+
+section.title h2,
+section.title h3 {
+  color: var(--cf-muted);
+  font-weight: 400;
+}
+
+section.title p {
+  margin: 0.5em 0;
+}
+
+/* Footer pinned to bottom-left on every slide */
+footer {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: var(--cf-muted);
+  position: absolute;
+  left: 30px;
+  right: auto;
+  bottom: 18px;
+  text-align: left;
+}
+
+/* Page numbers (bottom-right) */
+section::after {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: var(--cf-muted);
+  bottom: 18px;
+  right: 30px;
+}
+
+header {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: var(--cf-muted);
+}
+
+/* Dense-code slides: shrink fenced code blocks to fit long output */
+section.code-dense pre {
+  font-size: 0.55em;
+  line-height: 1.3;
+  padding: 0.6em 0.8em;
+}
+
+/* Images */
+section img {
+  border-radius: 2px;
+}
+
+/* Full-width slide pictures, with following content kept below the image. */
+section img.slide-picture {
+  display: block;
+  width: 100%;
+  max-height: 390px;
+  margin: 0 auto 0.4em;
+  object-fit: contain;
+}
+
+section img.slide-picture--compact {
+  max-height: 260px;
+}
+
+/* Full-slide diagrams exported as high-resolution raster images. */
+section.diagram-full > p:has(> img:only-child) {
+  width: 100%;
+  margin: 0;
+  min-height: 0;
+  text-align: center;
+}
+
+section.diagram-full > p > img:only-child {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 485px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+/* Network overview: copy and map share the available width without overlap. */
+section .cf-network {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 36px;
+  width: 100%;
+}
+
+section ul.cf-network-text {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 24px;
+}
+
+section .cf-network-figure {
+  margin: 0;
+  min-width: 0;
+  text-align: center;
+}
+
+section .cf-network-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 430px;
+  object-fit: contain;
+}
+
+section .cf-network-figure figcaption {
+  margin-top: 8px;
+  color: var(--cf-muted);
+  font-size: 15px;
+}
+
+/* Reusable Markdown-only picture slide: heading, image, then bullet list. */
+section.picture-side-by-side {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px 40px;
+}
+
+section.picture-side-by-side h2 {
+  grid-column: 1 / -1;
+}
+
+section.picture-side-by-side > p:has(> img:only-child) {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+  min-width: 0;
+}
+
+section.picture-side-by-side > p > img:only-child {
+  display: block;
+  width: 100%;
+  max-height: 470px;
+  object-fit: contain;
+}
+
+section.picture-side-by-side > ul,
+section.picture-side-by-side > ol {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+section.picture-side-by-side li {
+  margin-bottom: 0.45em;
+}
+
+/* Compact comparison tables for slides with several concise tradeoffs. */
+section.table-dense table {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+section.table-dense th,
+section.table-dense td {
+  padding: 0.35em 0.55em;
+}
+
+section.table-dense > p {
+  margin: 0.35em 0 0;
+  font-size: 18px;
+}

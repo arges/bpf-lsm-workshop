@@ -1,0 +1,125 @@
+# Build and test the workshop VM images. On a version tag, publish them as a
+# draft GitHub release.
+name: images
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends shellcheck
+      - name: Lint scripts and docs
+        run: make check
+
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            make curl python3 openssh-client zip \
+            qemu-utils qemu-system-x86 qemu-system-arm qemu-efi-aarch64
+
+      # Hosted runners have /dev/kvm, but only root can open it by default.
+      # The arm64 image is emulated on these x86 runners, so it does not use KVM.
+      - name: Allow the runner user to use KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' |
+            sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls -l /dev/kvm
+
+      - name: Cache the base image
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: base-${{ matrix.arch }}-${{ hashFiles('versions.mk') }}
+
+      - name: Build the image
+        run: make image ARCH=${{ matrix.arch }}
+
+      - name: Test the image
+        run: make test ARCH=${{ matrix.arch }}
+
+      - name: Package the OVA
+        if: matrix.arch == 'amd64'
+        run: make ova
+
+      - name: Package the UTM bundle
+        if: matrix.arch == 'arm64'
+        run: make utm ARCH=arm64
+
+      - name: Save the build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.arch }}
+          path: |
+            build/build-${{ matrix.arch }}.log
+            build/work-${{ matrix.arch }}/serial.log
+          if-no-files-found: ignore
+
+      # The images are already compressed. Do not compress them again.
+      # Only the release job uses these artifacts, so upload them only on a
+      # version tag and keep them for a short time. They use storage quota.
+      - name: Upload the images
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: images-${{ matrix.arch }}
+          path: |
+            build/bpf-lsm-workshop-${{ matrix.arch }}.qcow2
+            build/bpf-lsm-workshop-${{ matrix.arch }}.packages.txt
+            build/bpf-lsm-workshop-*.ova
+            build/bpf-lsm-workshop-*.utm.zip
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [check, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the images
+        uses: actions/download-artifact@v4
+        with:
+          pattern: images-*
+          path: build
+          merge-multiple: true
+
+      - name: Collect the release files
+        run: make dist
+
+      - name: Create a draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --draft \
+            --title "Workshop VM $GITHUB_REF_NAME" \
+            --notes "Read docs/running.md to start the VM. Check the download with SHA256SUMS."
