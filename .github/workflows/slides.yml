@@ -1,0 +1,65 @@
+# Render slides/slides.md with Marp and publish it on GitHub Pages.
+# The deck is the site's index page: https://arges.github.io/bpf-lsm-workshop/
+#
+# One-time setup: Settings > Pages > Source: "GitHub Actions".
+name: slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "slides/**"
+      - "Makefile"
+      - ".github/workflows/slides.yml"
+  pull_request:
+    paths:
+      - "slides/**"
+      - "Makefile"
+      - ".github/workflows/slides.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Do not cancel a deployment that is in progress; let the newest one run next.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Render the slides
+        run: make slides
+
+      # The page loads its images by relative path, so they go next to it.
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp slides/slides.html _site/index.html
+          cp -r slides/images slides/logo.png _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-26.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

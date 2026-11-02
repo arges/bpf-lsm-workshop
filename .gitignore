@@ -21,3 +21,4 @@ vmlinux.h
 /labs/*.log
 /labs/work/
 /tests/guest/deny_mkdir
+/slides/slides.html

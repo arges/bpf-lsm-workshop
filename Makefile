@@ -15,6 +15,8 @@ MEM       ?= 2048
 CPUS      ?= 2
 SSH_PORT  ?= 2222
 FORMAT    ?=
+# Pinned so that local builds and the Pages workflow render the same way.
+MARP_CLI  ?= @marp-team/marp-cli@4.5.1
 
 ifeq ($(filter $(ARCH),amd64 arm64),)
 $(error ARCH must be amd64 or arm64 (got '$(ARCH)'))
@@ -134,7 +136,7 @@ dist: ## Collect built images and SHA256SUMS in dist/ for a GitHub release
 
 .PHONY: slides
 slides: ## Render the workshop slides to slides/slides.html
-	npx --yes @marp-team/marp-cli@latest \
+	npx --yes $(MARP_CLI) \
 		--theme-set slides/themes/cloudflare-light.css \
 		--html --allow-local-files \
 		slides/slides.md -o slides/slides.html
