@@ -95,8 +95,10 @@ start_guard() {
 	guard_pid=$!
 	start=$(date +%s)
 	until grep -q '^copyfail_guard attached' "$labs/guard.log"; do
+		# The loader runs as root under sudo, so kill -0 from this user fails
+		# with EPERM even while it runs. /proc shows the process to any user.
 		running=yes
-		kill -0 "$guard_pid" 2>/dev/null || running=no
+		[ -d "/proc/$guard_pid" ] || running=no
 		if [ "$running" = no ] || [ $(($(date +%s) - start)) -ge 60 ]; then
 			echo "copyfail_guard log:" >&2
 			cat "$labs/guard.log" >&2

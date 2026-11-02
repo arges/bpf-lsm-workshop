@@ -44,7 +44,9 @@ loader_pid=$!
 tries=0
 until grep -qx attached loader.log; do
 	tries=$((tries + 1))
-	if [ "$tries" -ge 120 ] || ! kill -0 "$loader_pid" 2>/dev/null; then
+	# The loader runs as root under sudo, so kill -0 from this user fails with
+	# EPERM even while it runs. /proc shows the process to any user.
+	if [ "$tries" -ge 120 ] || [ ! -d "/proc/$loader_pid" ]; then
 		cat loader.log >&2
 		fail "the loader did not attach the program"
 	fi
