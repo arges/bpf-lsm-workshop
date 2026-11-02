@@ -4,6 +4,9 @@ This repository builds the virtual machine (VM) for the hands-on workshop
 [Mitigating All The Vulns with BPF-LSM: A Tutorial](https://pretalx.com/txlf2026/speaker/QDSWNE/)
 at Texas Linux Fest 2026. It also holds the workshop labs.
 
+**[View the slides in your browser](https://raw.githack.com/arges/bpf-lsm-workshop/main/slides/slides.html)**
+(Use the arrow keys to move between slides.)
+
 The repository contains no disk images. `make image` does these steps:
 
 1. Download a Debian 13 cloud image and check its checksum.
@@ -17,6 +20,13 @@ We publish the finished images as GitHub release files.
 
 The [slides](slides/slides.md) guide attendees through typing each command and code change. The
 numbered directories in [labs/](labs/) provide save points for recovery and review.
+
+## Slides
+
+- [View the slides in your browser](https://raw.githack.com/arges/bpf-lsm-workshop/main/slides/slides.html).
+- To view them offline, clone the repository and open `slides/slides.html` in a browser.
+- The source is [slides/slides.md](slides/slides.md). It uses [Marp](https://marp.app/).
+- After you change the source, run `make slides` and commit `slides/slides.html`.
 
 ## Download the image
 

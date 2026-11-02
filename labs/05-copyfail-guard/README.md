@@ -53,8 +53,8 @@ Push Ctrl-C to stop the loader. The mitigation stops when the loader stops.
 
 - The last denial above has the right name but the wrong file. A name can be false. An inode
   cannot.
-- A real rollout observes first (as in lab 02) to find the programs that need AF_ALG AEAD,
-  then puts them on the allow list before it enforces.
+- A real rollout observes first, as in lab 02. It finds the programs that need AF_ALG AEAD.
+  Then it puts them on the allow list before it enforces.
 - The hook gives the address only as a general `struct sockaddr`. So the program uses
   `bpf_probe_read_kernel()` to read the `struct sockaddr_alg` from the `address` argument.
 
