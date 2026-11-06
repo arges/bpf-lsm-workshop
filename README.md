@@ -39,7 +39,7 @@ These links always get the files from the newest release:
 | Linux, Intel/AMD | [bpf-lsm-workshop-amd64.qcow2](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.qcow2) |
 | Mac, Apple silicon | [bpf-lsm-workshop-arm64.utm.zip](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-arm64.utm.zip) (UTM) or [bpf-lsm-workshop-arm64.qcow2](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-arm64.qcow2) (QEMU) |
 | Mac, Intel | [bpf-lsm-workshop-amd64.qcow2](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.qcow2) (QEMU) or [bpf-lsm-workshop-amd64.ova](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.ova) (VirtualBox/VMware) |
-| Windows, Intel/AMD | [bpf-lsm-workshop-amd64.ova](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.ova) (VirtualBox/VMware) or [bpf-lsm-workshop-amd64.qcow2](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.qcow2) (QEMU) |
+| Windows, Intel/AMD | [bpf-lsm-workshop-amd64.ova](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.ova) (VirtualBox/VMware), [bpf-lsm-workshop-amd64.vhdx.zip](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.vhdx.zip) (Hyper-V) or [bpf-lsm-workshop-amd64.qcow2](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/bpf-lsm-workshop-amd64.qcow2) (QEMU) |
 | All | [SHA256SUMS](https://github.com/arges/bpf-lsm-workshop/releases/latest/download/SHA256SUMS), to check the download |
 
 All releases are on the [Releases page](https://github.com/arges/bpf-lsm-workshop/releases).
@@ -110,6 +110,7 @@ Other architectures and formats:
 make image test ARCH=arm64    # for Apple silicon; emulated on an x86 host, needs
                               # qemu-system-aarch64 and AArch64 UEFI firmware (AAVMF/edk2)
 make ova                      # OVA for VirtualBox / VMware (amd64)
+make vhdx                     # zipped VHDX for Hyper-V (amd64)
 make utm ARCH=arm64           # UTM virtual machine for Apple silicon Macs
 make convert FORMAT=vhdx      # or vdi, vmdk, raw
 ```
@@ -138,6 +139,7 @@ To make the release files on your own computer, run these commands:
 make image test
 make image test ARCH=arm64
 make ova
+make vhdx
 make utm ARCH=arm64
 make dist                     # dist/ with images, package manifests and SHA256SUMS
 gh release create v2026.11 dist/* --title "Workshop VM" --notes "See docs/running.md"

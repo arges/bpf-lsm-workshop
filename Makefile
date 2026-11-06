@@ -34,6 +34,7 @@ RUN_PID   := build/run-$(ARCH).pid
 RUN_LOG   := build/run-$(ARCH).log
 OVA       := build/$(NAME)-amd64.ova
 UTM       := build/$(NAME)-arm64.utm.zip
+VHDX      := build/$(NAME)-amd64.vhdx.zip
 CONVERTED := build/$(NAME)-$(ARCH).$(FORMAT)
 LAB_SOURCES := $(wildcard labs/*.md labs/*.mk labs/*.sh labs/*/Makefile \
 	labs/*/README.md labs/*/*.c) labs/05-copyfail-guard/copyfail_guard.h
@@ -106,6 +107,23 @@ ifneq ($(ARCH),arm64)
 endif
 	scripts/make-utm.sh $< $@
 
+# A VHDX file is not compressed, so the target zips it at the default level.
+.PHONY: vhdx
+vhdx: $(VHDX) ## Package the amd64 image as a zipped VHDX for Hyper-V
+
+$(VHDX): build/$(NAME)-amd64.qcow2
+ifneq ($(ARCH),amd64)
+	$(error the VHDX is only built for amd64; run `make vhdx ARCH=amd64`)
+endif
+	@command -v zip >/dev/null || { echo "error: zip is not installed" >&2; exit 1; }
+	rm -rf $@.tmp build/vhdx-work && mkdir -p build/vhdx-work
+	qemu-img convert -O vhdx -o subformat=dynamic $< build/vhdx-work/$(NAME)-amd64.vhdx
+	qemu-img check -q build/vhdx-work/$(NAME)-amd64.vhdx
+	cd build/vhdx-work && zip -q $(abspath $@.tmp) $(NAME)-amd64.vhdx
+	mv $@.tmp $@
+	rm -rf build/vhdx-work
+	@echo "built $@ ($$(du -h $@ | cut -f1))"
+
 .PHONY: convert
 convert: ## Convert the image with qemu-img: FORMAT=vhdx|vdi|vmdk|raw
 ifeq ($(filter $(FORMAT),vhdx vdi vmdk raw),)
@@ -123,7 +141,7 @@ endif
 dist: ## Collect built images and SHA256SUMS in dist/ for a GitHub release
 	@rm -rf dist && mkdir -p dist
 	@found=0; \
-	for f in build/$(NAME)-*.qcow2 build/$(NAME)-*.ova build/$(NAME)-*.utm.zip build/$(NAME)-*.packages.txt; do \
+	for f in build/$(NAME)-*.qcow2 build/$(NAME)-*.ova build/$(NAME)-*.vhdx.zip build/$(NAME)-*.utm.zip build/$(NAME)-*.packages.txt; do \
 		[ -f "$$f" ] || continue; \
 		ln -f "$$f" dist/ 2>/dev/null || cp "$$f" dist/; \
 		found=1; \

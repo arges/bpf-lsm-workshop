@@ -22,7 +22,7 @@ Go to the Releases page of this project. Download the file for your computer, an
 | Linux, Intel/AMD | `bpf-lsm-workshop-amd64.qcow2` |
 | Mac, Apple silicon (M1 or later) | `bpf-lsm-workshop-arm64.utm.zip` (UTM) or `bpf-lsm-workshop-arm64.qcow2` (QEMU) |
 | Mac, Intel | `bpf-lsm-workshop-amd64.qcow2` (QEMU) or `bpf-lsm-workshop-amd64.ova` (VirtualBox/VMware) |
-| Windows, Intel/AMD | `bpf-lsm-workshop-amd64.ova` (VirtualBox/VMware) or `bpf-lsm-workshop-amd64.qcow2` (QEMU) |
+| Windows, Intel/AMD | `bpf-lsm-workshop-amd64.ova` (VirtualBox/VMware), `bpf-lsm-workshop-amd64.vhdx.zip` (Hyper-V) or `bpf-lsm-workshop-amd64.qcow2` (QEMU) |
 
 Check the download:
 
@@ -49,7 +49,8 @@ We tested only some of the methods below:
 | OVA import into VirtualBox or VMware | **Not tested.** |
 | macOS: the UTM bundle (`.utm.zip`) | **Not tested.** We wrote its settings from the UTM source code. Nobody opened it in UTM yet. |
 | macOS: QEMU with HVF, or a manual UTM import | **Not tested.** |
-| Windows: QEMU with WHPX, or Hyper-V | **Not tested.** |
+| amd64 VHDX disk on IDE hardware under QEMU | **Tested.** It boots and passes the BPF LSM test and the lab tests. |
+| Windows: Hyper-V or QEMU with WHPX | **Not tested.** |
 
 If you try a method that we did not test, please tell us the result.
 
@@ -162,14 +163,49 @@ qemu-system-x86_64 -accel whpx -m 2048 -smp 2 `
 
 **Hyper-V**
 
-1. Convert the disk. QEMU for Windows includes `qemu-img`:
+Hyper-V is in Windows Pro, Enterprise and Education. It is not in Windows Home. To turn it on, run
+this command in PowerShell as administrator, and then restart Windows:
+
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+```
+
+1. Unpack `bpf-lsm-workshop-amd64.vhdx.zip`. You get `bpf-lsm-workshop-amd64.vhdx`. Put it in
+   the folder where you want to keep the VM.
+2. Run these commands in PowerShell as administrator, in the same folder:
 
    ```powershell
-   qemu-img convert -O vhdx bpf-lsm-workshop-amd64.qcow2 bpf-lsm-workshop-amd64.vhdx
+   New-VM -Name bpf-lsm-workshop -Generation 1 -MemoryStartupBytes 2GB `
+     -VHDPath "$PWD\bpf-lsm-workshop-amd64.vhdx" -SwitchName "Default Switch"
+   Set-VMProcessor -VMName bpf-lsm-workshop -Count 2
+   Start-VM -Name bpf-lsm-workshop
+   vmconnect localhost bpf-lsm-workshop
    ```
 
-2. Create a *Generation 1* VM. Use the `.vhdx` file as its existing disk.
-3. Connect the VM to the *Default Switch*.
+   Or use Hyper-V Manager: select *New → Virtual Machine*. Select *Generation 1*, 2048 MB of memory
+   and the *Default Switch*. Then select *Use an existing virtual hard disk* and the `.vhdx` file.
+3. Log in on the console. Get the IP address of the VM:
+
+   ```sh
+   hostname -I
+   ```
+
+4. To use SSH from Windows, use that address:
+
+   ```powershell
+   ssh workshop@<address>
+   ```
+
+Use *Generation 1*. It boots without UEFI, so Secure Boot does not apply. If you use
+*Generation 2*, open *Settings → Security* and select the *Microsoft UEFI Certificate Authority*
+template, or clear *Enable Secure Boot*. The default template does not start Linux.
+
+The *Default Switch* can give the VM a different address after Windows restarts. If SSH stops
+working, run `hostname -I` again.
+
+**VirtualBox and Hyper-V together.** If Hyper-V, WSL2 or *Memory integrity* is on, VirtualBox runs
+on top of Hyper-V. Then VirtualBox is slow, or the VM does not start. In this case, use the
+Hyper-V image or VMware.
 
 ## 3. Check the VM
 

@@ -65,6 +65,10 @@ jobs:
         if: matrix.arch == 'amd64'
         run: make ova
 
+      - name: Package the Hyper-V disk
+        if: matrix.arch == 'amd64'
+        run: make vhdx
+
       - name: Package the UTM bundle
         if: matrix.arch == 'arm64'
         run: make utm ARCH=arm64
@@ -91,6 +95,7 @@ jobs:
             build/bpf-lsm-workshop-${{ matrix.arch }}.qcow2
             build/bpf-lsm-workshop-${{ matrix.arch }}.packages.txt
             build/bpf-lsm-workshop-*.ova
+            build/bpf-lsm-workshop-*.vhdx.zip
             build/bpf-lsm-workshop-*.utm.zip
           compression-level: 0
           if-no-files-found: error

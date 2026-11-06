@@ -28,6 +28,7 @@ The Makefile is the project's public interface. Targets exit 0 on success and no
 | `stop` | — | Gracefully shuts down a VM started with `start`; stops QEMU directly if SSH is unavailable |
 | `ssh` | — | Opens an SSH session to a VM started with `start` or `run` |
 | `ova` | `build/bpf-lsm-workshop-amd64.ova` | amd64 only |
+| `vhdx` | `build/bpf-lsm-workshop-amd64.vhdx.zip` | amd64 only; a zipped dynamic VHDX for Hyper-V |
 | `utm` | `build/bpf-lsm-workshop-arm64.utm.zip` | arm64 only (`ARCH=arm64`); a UTM VM bundle for Apple silicon Macs |
 | `convert FORMAT=<f>` | `build/bpf-lsm-workshop-$(ARCH).<f>` | Thin wrapper over `qemu-img convert` |
 | `dist` | `dist/*` and `dist/SHA256SUMS` | Copies whatever images exist in `build/`; fails if any file is ≥ 2 GiB |
