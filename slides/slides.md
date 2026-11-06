@@ -816,8 +816,32 @@ static __always_inline bool current_exe_is_allowed(void)
 - first look at copyfail_guard.bpf.c, we need to add some maps
 - we will now check if an exe is allowed by inode and device instead of name
 - in addition we'll have a ringbuf so we can send messages to userspace
+- the C struct describes the map, but it isn't a real structure, libbpf does a lot of heavy lifting
+- ringbuffer type is completely different
+- bpf syscall with the right command can read this (our loader will handle this)
 -->
 
+---
+<!-- _class: code-dense -->
+## copyfail guard: header
+
+```c
+#define COMM_LEN 16
+#define SALG_TYPE_LEN 14
+#define SALG_NAME_LEN 64
+
+struct exe_id {
+	__u64 dev;
+	__u64 ino;
+};
+
+struct event {
+	__u32 pid;
+	__u32 uid;
+	char comm[COMM_LEN];
+	char salg_name[SALG_NAME_LEN];
+};
+```
 ---
 
 <!-- _class: code-dense -->
